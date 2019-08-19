@@ -3,13 +3,9 @@ from pygame.locals import *
 
 
 
-playerX=740   
-playerY=100
 
-cpuX=30
-cpuY=0
-height=0
-cpuVy=2
+
+
 circleVx=5
 circleVy=6
 circleX=400 
@@ -17,85 +13,118 @@ circleY=300
 radius=20
 playerHP=500
 cpuHP=500
-cpuHeight=100
- 
+
 
 
 # import pygame.locals for easier access to key coordinates
 
 # Define our player object and call super to give it all the properties and methods of pygame.sprite.Sprite
 # The surface we draw on the screen is now a property of 'player'
-class Entities(pygame.sprite.Sprite):
+class PLAYER(pygame.sprite.Sprite):
     def __init__(self):
-        super(Entities, self).__init__()
-        self.cpuSurface = pygame.Surface((25, 100))
-        self.cpuSurface.fill((255, 255, 255))
-        self.rect = self.cpuSurface.get_rect()
-        
+        super(PLAYER, self).__init__()
         self.playerSurface = pygame.Surface((25, 100))
         self.playerSurface.fill((255, 255, 255))
         self.rect = self.playerSurface.get_rect()
-        
         self.playerHP=500
-        self.cpuHP=500
-        
         self.playerX=740
         self.playerY=100
-        
-        
+      
         
         
         
     def scoreDisplay(self):
-            font = pygame.font.Font('freesansbold.ttf', 32) 
-            screen.fill(pygame.Color("black")) # erases the entire screen surface
-        
-            textsurface = font.render("CPU :"+str(self.getCPUHpScore()), False, (255, 255, 255))
-            screen.blit(textsurface,(0,0))
-            
-            textsurface = font.render("player :"+str(self.getPlayerHpScore()), False, (255, 255, 255))
+            font = pygame.font.Font('freesansbold.ttf', 32)  # erases the entire screen surface
+            textsurface = font.render("player :"+str(self.getHpScore()), False, (255, 255, 255))
             screen.blit(textsurface,(600,0))
     
     
-    def setPlayerHPScore(self,playerHP_):
+    def setHPScore(self,playerHP_):
             self.playerHP=playerHP_
         
-    def getPlayerHpScore(self):
+    def getHpScore(self):
             return self.playerHP;
         
-    def setCPUHPScore(self,cpuHP_):
-            self.cpuHP=cpuHP_
-        
-    def getCPUHpScore(self):
-            return cpuHP;  
-        
-    def clearPlayerImage(self): 
-            surf3 = pygame.Surface((25, 100))
-            surf3.fill((0, 0, 0))
-            screen.blit(surf3, (self.getPlayerPositionX(), self.getPlayerPositionY()))
-    def drawPlayerImage(self):
-            screen.blit(self.playerSurface, (self.getPlayerPositionX(),self.getPlayerPositionY()))
+
+    def clearImage(self): 
+            playerImage = pygame.Surface((25, 100))
+            playerImage.fill((0, 0, 0))
+            screen.blit(playerImage, (self.getPositionX(), self.getPositionY()))
+    
+    def drawImage(self):
+            screen.blit(self.playerSurface, (self.getPositionX(),self.getPositionY()))
             self.playerSurface.fill((255, 255, 255))
             pygame.display.update()
             
         
-    def getPlayerPositionX(self):
+    def getPositionX(self):
         return self.playerX 
-    def setPlayerPositionX(self,playerX_):
+    def setPositionX(self,playerX_):
         self.playerX=playerX_
-    def getPlayerPositionY(self):
+    def getPositionY(self):
         return self.playerY
-    def setPlayerPositionY(self,playerY_):
+    def setPositionY(self,playerY_):
         self.playerY=playerY_ 
-    def setCpuPositionY(self,cpuY_):
-        self.cpuY=cpuY_
-    def getCpuPositionY(self):
-        return self.cpuY
-    def getCpuVelocityY(self):
-        return self.cpuVy
-    def setCpuVelocityY(self,cpuVy_):
-        self.cpuVy=cpuVy_
+  
     
+
+class CPU(pygame.sprite.Sprite):
+    def __init__(self):
+        super(CPU, self).__init__()
+        self.cpuSurface = pygame.Surface((25, 100))
+        self.cpuSurface.fill((255, 255, 255))
+        self.rect = self.cpuSurface.get_rect()
+        self.cpuHP=500
+        self.cpuX=30
+        self.cpuY=0
+        self.cpuVy=2
+        
+            
+    def scoreDisplay(self):
+            cpuFont = pygame.font.Font('freesansbold.ttf', 32) 
+            textsurface2 = cpuFont.render("CPU :"+str(self.getHpScore()), False, (255, 255, 255))
+            screen.blit(textsurface2,(0,0))
+       
+            
+            
+    def setPositionY(self,cpuY_):
+        self.cpuY=cpuY_
+        
+    def getPositionY(self):
+        return self.cpuY
+    
+    def setPositionX(self,cpuX_):
+        self.cpuX=cpuX_
+    def getPositionX(self):
+        return self.cpuX
+    def getVelocityY(self):
+        return self.cpuVy
+    def setVelocityY(self,cpuVy_):
+        self.cpuVy=cpuVy_  
+    def setHPScore(self,cpuHP_):
+            self.cpuHP=cpuHP_
+    def getHpScore(self):
+            return cpuHP;  
+        
+    def drawImage(self):
+        screen.blit(self.cpuSurface, (self.getPositionX(), self.getPositionY()))
+        self.cpuSurface.fill((255, 255, 255))
+        pygame.display.update()   
+    
+        
+
+
+
+    
+
+
+
+
+
+
+
+
+
 
 # initialize pygame
 pygame.init()
@@ -104,8 +133,9 @@ pygame.init()
 # here we pass it a size of 800x600
 screen = pygame.display.set_mode((800, 600))
 
-# instantiate our player; right now he's just a rectangle
-entities = Entities()
+
+player = PLAYER()
+cpu=CPU()
 clock = pygame.time.Clock()
 
 # Variable to keep our main loop running
@@ -124,12 +154,12 @@ while running:
             if event.key == K_ESCAPE:
                 running = False
             elif event.key == pygame.K_UP:
-                entities.clearPlayerImage();
-                entities.setPlayerPositionY(entities.getPlayerPositionY()-40)
+                player.clearImage();
+                player.setPositionY(player.getPositionY()-40)
               
             elif event.key == pygame.K_DOWN:
-                entities.clearPlayerImage()
-                entities.setPlayerPositionY(entities.getPlayerPositionY()+40)
+                player.clearImage()
+                player.setPositionY(player.getPositionY()+40)
       
         # Check for QUIT event; if QUIT, set running to false
         elif event.type == QUIT:
@@ -139,61 +169,59 @@ while running:
   
     
 
+    cpu.setPositionY(cpu.getPositionY()+cpu.getVelocityY())
+    print(cpu.getPositionY())
     
-    cpuY+=cpuVy
     pygame.draw.circle(screen, (0,0,0), (circleX, circleY), radius, 10)
 
     if circleVx+circleX>=800  :
         circleVx*=-1
         playerHP=playerHP-20
-        entities.setPlayerHPScore(playerHP)
+        player.setHPScore(playerHP)
         
     elif circleVx+circleX<=0:
         circleVx*=-1
         cpuHP=cpuHP-20
-        entities.setCPUHPScore(cpuHP)
-    elif (circleVx+circleX+radius>=playerX and (circleVy+circleY>=playerY and circleVy+circleY<=(playerY+100))) or (circleX+circleVx<=cpuX+25 and (circleVy+circleY>=cpuY and circleVy+circleY<=(cpuY+100))):
+        cpu.setHPScore(cpuHP)
+    elif (circleVx+circleX+radius>=player.getPositionX() and (circleVy+circleY>=player.getPositionY() and circleVy+circleY<=(player.getPositionY()+100))) or (circleX+circleVx<=cpu.getPositionX()+25 and (circleVy+circleY>=cpu.getPositionY() and circleVy+circleY<=(cpu.getPositionY()+100))):
         circleVx*=-1
     elif circleVy+circleY>=600 or circleVy+circleY<=0:
         circleVy*=-1
-    elif(((circleVy>0 and cpuVy<0) or (circleVy<0 and cpuVy>0)) and circleX==300 and circleVx==-5 and (circleY-playerY>50)) :
-        cpuVy*=-1
-    elif((circleVy>0 and cpuVy>0) and circleY>300 and playerY<300 and circleX<400 and circleVx==-5) :
-        if playerY<300:
-            cpuVy=5
+    elif(((circleVy>0 and cpu.getVelocityY()<0) or (circleVy<0 and cpu.getVelocityY()>0)) and circleX==300 and circleVx==-5 and (circleY-player.getPositionY()>50)) :
+        cpu.setVelocityY(cpu.getVelocityY()*(-1))
+    elif((circleVy>0 and cpu.getVelocityY()>0) and circleY>300 and player.getPositionY()<300 and circleX<400 and circleVx==-5) :
+        if player.getPositionY()<300:
+            cpu.setVelocityY(5)
         else:
-            cpuVy=2
-    elif((circleVy>0 and cpuVy>0) and circleY<300 and circleX<400  and circleVx==-5) :
-        if playerY>300:
-            cpuVy=5
+            cpu.setVelocityY(2)
+    elif((circleVy>0 and cpu.getVelocityY()>0) and circleY<300 and circleX<400  and circleVx==-5) :
+        if player.getPositionY()>300:
+            cpu.setVelocityY(5)
         else:
-            cpuVy=2
-    elif((circleVy<0 and cpuVy<0) and circleY<300 and circleX<400 and circleVx==-5) :
-        if playerY>300:
-            cpuVy=-5
+            cpu.setVelocityY(2)
+    elif((circleVy<0 and cpu.getVelocityY()<0) and circleY<300 and circleX<400 and circleVx==-5) :
+        if player.getPositionY()>300:
+            cpu.setVelocityY(-5)
         else:
-            cpuVy=-2
+            cpu.setVelocityY(-2)
   
-    elif((circleVy<0 and cpuVy<0) and circleY>300 and circleX<400 and circleVx==-5) :
-        if playerY<300:
-            cpuVy=-5
+    elif((circleVy<0 and cpu.getVelocityY()<0) and circleY>300 and circleX<400 and circleVx==-5) :
+        if player.getPositionY()<300:
+           cpu.setVelocityY(-5)
         else:
-            cpuVy=-2
+            cpu.setVelocityY(-2)
     
 
-
-    
-        
-    
-    if cpuY+cpuVy>=502:
-        cpuVy*=-1
-    elif cpuY+cpuVy<=0:
-        cpuVy*=-1
+    if cpu.getPositionY()+cpu.getVelocityY()>=502:
+        cpu.setVelocityY(cpu.getVelocityY()*(-1))
+    elif cpu.getPositionY()+cpu.getVelocityY()<=0:
+        cpu.setVelocityY(cpu.getVelocityY()*(-1))
     
    
-    entities.scoreDisplay()
-    
- 
+    screen.fill(pygame.Color("black"))
+    cpu.scoreDisplay()
+    player.scoreDisplay()
+  
    
 
     circleX+=circleVx
@@ -204,10 +232,9 @@ while running:
     pygame.draw.circle(screen, (255,255,255), (circleX, circleY), radius, 10)
   
  
-    entities.drawPlayerImage()
+    player.drawImage()
     
-    screen.blit(entities.cpuSurface, (cpuX, cpuY))
-    pygame.display.update()
+    cpu.drawImage()
 
 
 
