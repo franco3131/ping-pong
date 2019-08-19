@@ -2,14 +2,6 @@ import pygame
 from pygame.locals import *
 
 
-
-
-
-
-circleVx=5
-circleVy=6
-circleX=400 
-circleY=300
 radius=20
 playerHP=500
 cpuHP=500
@@ -111,17 +103,46 @@ class CPU(pygame.sprite.Sprite):
         self.cpuSurface.fill((255, 255, 255))
         pygame.display.update()   
     
-        
+    def moveUpDownAtBorder(self): 
+        if self.getPositionY()+self.getVelocityY()>=502:
+            self.setVelocityY(self.getVelocityY()*(-1))
+        elif self.getPositionY()+self.getVelocityY()<=0:
+            self.setVelocityY(self.getVelocityY()*(-1))
 
 
 
     
 
+class CIRCLE(pygame.sprite.Sprite):
+    def __init__(self):
+        super(CIRCLE, self).__init__()
+        self.circleVx=5
+        self.circleVy=6
+        self.circleX=400 
+        self.circleY=300
 
 
+    def setPositionX(self,circleX_): 
+        self.circleX=circleX_
+    def getPositionX(self):
+        return self.circleX
+    def setVelocityX(self,circleVx_):
+        self.circleVx=circleVx_
+    def getVelocityX(self):
+        return self.circleVx
+    def setPositionY(self,circleY_): 
+        self.circleY=circleY_
+    def getPositionY(self):
+        return self.circleY
+    def setVelocityY(self,circleVy_):
+        self.circleVy=circleVy_
+    def getVelocityY(self):
+        return self.circleVy
 
-
-
+    def drawCircleImage(self):
+        pygame.draw.circle(screen, (255,255,255), (circle.getPositionX(), circle.getPositionY()), radius, 10)
+    def clearCircleImage(self):
+        pygame.draw.circle(screen, (0,0,0), (circle.getPositionX(), circle.getPositionY()), radius, 10)
 
 
 
@@ -136,6 +157,7 @@ screen = pygame.display.set_mode((800, 600))
 
 player = PLAYER()
 cpu=CPU()
+circle=CIRCLE()
 clock = pygame.time.Clock()
 
 # Variable to keep our main loop running
@@ -170,52 +192,49 @@ while running:
     
 
     cpu.setPositionY(cpu.getPositionY()+cpu.getVelocityY())
-    print(cpu.getPositionY())
-    
-    pygame.draw.circle(screen, (0,0,0), (circleX, circleY), radius, 10)
+   
+    circle.drawCircleImage()
+    pygame.draw.circle(screen, (0,0,0), (circle.getPositionX(), circle.getPositionY()), radius, 10)
 
-    if circleVx+circleX>=800  :
-        circleVx*=-1
+    if circle.getVelocityX()+circle.getPositionX()>=800:
+        circle.setVelocityX(circle.getVelocityX()*(-1))
         playerHP=playerHP-20
         player.setHPScore(playerHP)
-        
-    elif circleVx+circleX<=0:
-        circleVx*=-1
+    elif circle.getVelocityX()+circle.getPositionX()<=0:
+        circle.setVelocityX(circle.getVelocityX()*(-1))
         cpuHP=cpuHP-20
         cpu.setHPScore(cpuHP)
-    elif (circleVx+circleX+radius>=player.getPositionX() and (circleVy+circleY>=player.getPositionY() and circleVy+circleY<=(player.getPositionY()+100))) or (circleX+circleVx<=cpu.getPositionX()+25 and (circleVy+circleY>=cpu.getPositionY() and circleVy+circleY<=(cpu.getPositionY()+100))):
-        circleVx*=-1
-    elif circleVy+circleY>=600 or circleVy+circleY<=0:
-        circleVy*=-1
-    elif(((circleVy>0 and cpu.getVelocityY()<0) or (circleVy<0 and cpu.getVelocityY()>0)) and circleX==300 and circleVx==-5 and (circleY-player.getPositionY()>50)) :
+    elif (circle.getVelocityX()+circle.getPositionX()+radius>=player.getPositionX() and (circle.getVelocityY()+circle.getPositionY()>=player.getPositionY() and circle.getVelocityY()+circle.getPositionY()<=(player.getPositionY()+100))) or (circle.getPositionX()+circle.getVelocityX()<=cpu.getPositionX()+25 and (circle.getVelocityY()+circle.getPositionY()>=cpu.getPositionY() and circle.getVelocityY()+circle.getPositionY()<=(cpu.getPositionY()+100))):
+         circle.setVelocityX(circle.getVelocityX()*(-1))
+    elif circle.getVelocityY()+circle.getPositionY()>=600 or circle.getVelocityY()+circle.getPositionY()<=0:
+        circle.setVelocityY(circle.getVelocityY()*(-1))
+    elif(((circle.getVelocityY()>0 and cpu.getVelocityY()<0) or (circle.getVelocityY()<0 and cpu.getVelocityY()>0)) and circle.getPositionX()==300 and circle.getVelocityX()==-5 and (circle.getPositionY()-player.getPositionY()>50)) :
         cpu.setVelocityY(cpu.getVelocityY()*(-1))
-    elif((circleVy>0 and cpu.getVelocityY()>0) and circleY>300 and player.getPositionY()<300 and circleX<400 and circleVx==-5) :
+    elif((circle.getVelocityY()>0 and cpu.getVelocityY()>0) and circle.getPositionY()>300 and player.getPositionY()<300 and circle.getPositionX()<400 and circle.getVelocityX()==-5) :
         if player.getPositionY()<300:
             cpu.setVelocityY(5)
         else:
             cpu.setVelocityY(2)
-    elif((circleVy>0 and cpu.getVelocityY()>0) and circleY<300 and circleX<400  and circleVx==-5) :
+    elif((circle.getVelocityY()>0 and cpu.getVelocityY()>0) and circle.getVelocityY()<300 and circle.getPositionX()<400  and circle.getVelocityX()==-5) :
         if player.getPositionY()>300:
             cpu.setVelocityY(5)
         else:
             cpu.setVelocityY(2)
-    elif((circleVy<0 and cpu.getVelocityY()<0) and circleY<300 and circleX<400 and circleVx==-5) :
+    elif((circle.getVelocityY()<0 and cpu.getVelocityY()<0) and circle.getPositionY()<300 and circle.getPositionX()<400 and circle.getVelocityX()==-5) :
         if player.getPositionY()>300:
             cpu.setVelocityY(-5)
         else:
             cpu.setVelocityY(-2)
   
-    elif((circleVy<0 and cpu.getVelocityY()<0) and circleY>300 and circleX<400 and circleVx==-5) :
+    elif((circle.getVelocityY()<0 and cpu.getVelocityY()<0) and circle.getVelocityY()>300 and circle.getPositionX()<400 and circle.getVelocityX()==-5) :
         if player.getPositionY()<300:
            cpu.setVelocityY(-5)
         else:
             cpu.setVelocityY(-2)
     
-
-    if cpu.getPositionY()+cpu.getVelocityY()>=502:
-        cpu.setVelocityY(cpu.getVelocityY()*(-1))
-    elif cpu.getPositionY()+cpu.getVelocityY()<=0:
-        cpu.setVelocityY(cpu.getVelocityY()*(-1))
+    
+    
+    cpu.moveUpDownAtBorder()
     
    
     screen.fill(pygame.Color("black"))
@@ -223,14 +242,13 @@ while running:
     player.scoreDisplay()
   
    
-
-    circleX+=circleVx
-    circleY+=circleVy
+    circle.setPositionX(circle.getPositionX()+circle.getVelocityX())
+    circle.setPositionY(circle.getPositionY()+circle.getVelocityY())
+ 
     
 
         
-    pygame.draw.circle(screen, (255,255,255), (circleX, circleY), radius, 10)
-  
+    circle.drawCircleImage()
  
     player.drawImage()
     
