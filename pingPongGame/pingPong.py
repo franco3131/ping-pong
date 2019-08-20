@@ -11,7 +11,6 @@ barHeight=100
 barWidth=25
 
 
-
 # import pygame.locals for easier access to key coordinates
 
 # Define our player object and call super to give it all the properties and methods of pygame.sprite.Sprite
