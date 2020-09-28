@@ -1,3 +1,8 @@
+'''
+Created on Sep 18, 2020
+
+@author: davidfranco
+'''
 import pygame
 from pygame.locals import *
 
@@ -5,12 +10,11 @@ from pygame.locals import *
 
 playerX=740   
 playerY=100
-
 cpuX=30
 cpuY=0
 height=0
 cpuVy=2
-circleVx=5
+circleVx=4
 circleVy=6
 circleX=400 
 circleY=300
@@ -21,13 +25,9 @@ cpuHeight=100
  
 
 
-# import pygame.locals for easier access to key coordinates
-
-# Define our player object and call super to give it all the properties and methods of pygame.sprite.Sprite
-# The surface we draw on the screen is now a property of 'player'
-class Entities(pygame.sprite.Sprite):
+class PingPong(pygame.sprite.Sprite):
     def __init__(self):
-        super(Entities, self).__init__()
+        super(PingPong, self).__init__()
         self.cpuSurface = pygame.Surface((25, 100))
         self.cpuSurface.fill((255, 255, 255))
         self.rect = self.cpuSurface.get_rect()
@@ -100,27 +100,18 @@ class Entities(pygame.sprite.Sprite):
 # initialize pygame
 pygame.init()
 
-# create the screen object
-# here we pass it a size of 800x600
+
 screen = pygame.display.set_mode((800, 600))
 
-# instantiate our player; right now he's just a rectangle
-entities = Entities()
+entities = PingPong()
 clock = pygame.time.Clock()
 
-# Variable to keep our main loop running
 running = True
 
 
-
-
-# Our main loop!
 while running:
-    # for loop through the event queue
     for event in pygame.event.get():
-        # Check for KEYDOWN event; KEYDOWN is a constant defined in pygame.locals, which we imported earlier
         if event.type == KEYDOWN:
-            # If the Esc key has been pressed set running to false to exit the main loop
             if event.key == K_ESCAPE:
                 running = False
             elif event.key == pygame.K_UP:
@@ -142,7 +133,9 @@ while running:
     
     cpuY+=cpuVy
     pygame.draw.circle(screen, (0,0,0), (circleX, circleY), radius, 10)
-
+    print(circleVy+circleY)
+    print("player")
+    print(playerY)
     if circleVx+circleX>=800  :
         circleVx*=-1
         playerHP=playerHP-20
@@ -152,7 +145,8 @@ while running:
         circleVx*=-1
         cpuHP=cpuHP-20
         entities.setCPUHPScore(cpuHP)
-    elif (circleVx+circleX+radius>=playerX and (circleVy+circleY>=playerY and circleVy+circleY<=(playerY+100))) or (circleX+circleVx<=cpuX+25 and (circleVy+circleY>=cpuY and circleVy+circleY<=(cpuY+100))):
+       
+    elif (circleVx+circleX>=playerX and (circleVy+circleY>= entities.getPlayerPositionY() and circleVy+circleY<=( entities.getPlayerPositionY()+100))) or (circleX+circleVx<=cpuX+25 and (circleVy+circleY>=cpuY and circleVy+circleY<=(cpuY+100))):
         circleVx*=-1
     elif circleVy+circleY>=600 or circleVy+circleY<=0:
         circleVy*=-1
